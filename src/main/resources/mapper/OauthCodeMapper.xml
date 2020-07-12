@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtf.oauth.mapper.OauthCodeMapper">
+  <resultMap id="BaseResultMap" type="com.wtf.oauth.po.OauthCode">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="authentication" jdbcType="LONGVARBINARY" property="authentication" />
+  </resultMap>
+  <sql id="oauth_codeColumns">
+    <![CDATA[ id,code,authentication ]]>
+  </sql>
+  <sql id="oauth_codeDynamicWhere">
+    <where>
+      <if test="null != id and '' !=  id">and id = #{ id}</if>
+      <if test="null != code and '' !=  code">and code = #{ code}</if>
+      <if test="null != authentication and '' !=  authentication">and authentication = #{ authentication}</if>
+	</where>
+  </sql>
+  <sql id="oauth_codeDynamicLikeWhere">
+    <where>
+      <if test="null != id and '' !=  id">and id LIKE #{ id}</if>
+      <if test="null != code and '' !=  code">and code LIKE #{ code}</if>
+      <if test="null != authentication and '' !=  authentication">and authentication LIKE #{ authentication}</if>
+	</where>
+  </sql>
+  <select id="getById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select <include refid="oauth_codeColumns" /> from  `oauth_code` where id = #{id}
+  </select>
+  <select id="getOne" parameterType="com.wtf.oauth.po.OauthCode" resultMap="BaseResultMap">
+    select <include refid="oauth_codeColumns" /> from  `oauth_code` <include refid="oauth_codeDynamicWhere" /> limit 0 , 1
+  </select>
+  <select id="list" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="oauth_codeColumns" /> from  `oauth_code` <include refid="oauth_codeDynamicWhere" />
+	<if test="orderBy != null and orderBy != ''">
+          order by ${orderBy}
+      </if>
+  </select>
+  <select id="listPage" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="oauth_codeColumns" /> from  `oauth_code` <include refid="oauth_codeDynamicWhere" />
+	<if test="orderBy != null">
+            order by ${orderBy}
+        </if>
+        <if test="fromIndex != null and fromIndex > -1 and pageSize != null and pageSize > 0">
+            limit #{fromIndex},#{pageSize}
+        </if>
+  </select>
+  <select id="listLikePage" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="oauth_codeColumns" /> from  `oauth_code` <include refid="oauth_codeDynamicLikeWhere" />
+	<if test="orderBy != null">
+            order by ${orderBy}
+        </if>
+        <if test="fromIndex != null and fromIndex > -1 and pageSize != null and pageSize > 0">
+            limit #{fromIndex},#{pageSize}
+        </if>
+  </select>
+  <select id="countLike" parameterType="com.wtf.oauth.po.OauthCode" resultType="java.lang.Long">
+    select count(1) from `oauth_code` <include refid="oauth_codeDynamicLikeWhere" />
+  </select>
+  <select id="count" parameterType="com.wtf.oauth.po.OauthCode" resultType="java.lang.Long">
+    select count(1) from `oauth_code` <include refid="oauth_codeDynamicWhere" />
+  </select>
+  <sql id="save_oauth_code_columns">
+    insert into `oauth_code`(
+		code ,authentication
+	) values
+  </sql>
+  <sql id="save_oauth_code_values">
+    (
+	  #{ code,jdbcType=VARCHAR},
+	  #{ authentication,jdbcType=LONGVARBINARY}
+	)
+  </sql>
+  <insert id="save" keyProperty="id" parameterType="com.wtf.oauth.po.OauthCode" useGeneratedKeys="true">
+    <include refid="save_oauth_code_columns" /><include refid="save_oauth_code_values" />
+  </insert>
+  <insert id="batchSave" parameterType="list">
+    <foreach collection="list" index="index" item="item" open="" separator=";" close="">
+	  <include refid="save_oauth_code_columns" /><include refid="save_oauth_code_values" />
+	</foreach>
+  </insert>
+  <sql id="oauth_codeUpdate">
+    update `oauth_code` 
+	<set> 
+      <if test="null != code">code = #{ code,jdbcType=VARCHAR},</if>
+      <if test="null != authentication">authentication = #{ authentication,jdbcType=LONGVARBINARY}</if>
+	</set>
+	where id = #{id}
+  </sql>
+  <update id="update" parameterType="com.wtf.oauth.po.OauthCode">
+    <include refid="oauth_codeUpdate" />
+  </update>
+  <update id="batchUpdate" parameterType="list">
+    <foreach collection="list" index="index" item="item" open="" separator=";" close="">
+	  <include refid="oauth_codeUpdate" />
+	</foreach>
+  </update>
+  <delete id="delById">
+    <![CDATA[ delete from `oauth_code` where id = #{id} ]]>
+  </delete>
+  <delete id="delArray">
+    delete from `oauth_code` where id in
+	<foreach collection="array" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
+  </delete>
+  <delete id="delList">
+    delete from `oauth_code` where id in
+	<foreach collection="list" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
+  </delete>
+</mapper>

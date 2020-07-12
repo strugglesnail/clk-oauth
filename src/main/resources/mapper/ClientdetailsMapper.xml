@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtf.oauth.mapper.ClientdetailsMapper">
+  <resultMap id="BaseResultMap" type="com.wtf.oauth.po.Clientdetails">
+    <id column="appId" jdbcType="VARCHAR" property="appid" />
+    <result column="resourceIds" jdbcType="VARCHAR" property="resourceids" />
+    <result column="appSecret" jdbcType="VARCHAR" property="appsecret" />
+    <result column="scope" jdbcType="VARCHAR" property="scope" />
+    <result column="grantTypes" jdbcType="VARCHAR" property="granttypes" />
+    <result column="redirectUrl" jdbcType="VARCHAR" property="redirecturl" />
+    <result column="authorities" jdbcType="VARCHAR" property="authorities" />
+    <result column="access_token_validity" jdbcType="INTEGER" property="accessTokenValidity" />
+    <result column="refresh_token_validity" jdbcType="INTEGER" property="refreshTokenValidity" />
+    <result column="additionalInformation" jdbcType="VARCHAR" property="additionalinformation" />
+    <result column="autoApproveScopes" jdbcType="VARCHAR" property="autoapprovescopes" />
+  </resultMap>
+  <sql id="clientdetailsColumns">
+    <![CDATA[ appId,resourceIds,appSecret,scope,grantTypes,redirectUrl,authorities,access_token_validity,refresh_token_validity,additionalInformation,autoApproveScopes ]]>
+  </sql>
+  <sql id="clientdetailsDynamicWhere">
+    <where>
+      <if test="null != appid and '' !=  appid">and appId = #{ appid}</if>
+      <if test="null != resourceids and '' !=  resourceids">and resourceIds = #{ resourceids}</if>
+      <if test="null != appsecret and '' !=  appsecret">and appSecret = #{ appsecret}</if>
+      <if test="null != scope and '' !=  scope">and scope = #{ scope}</if>
+      <if test="null != granttypes and '' !=  granttypes">and grantTypes = #{ granttypes}</if>
+      <if test="null != redirecturl and '' !=  redirecturl">and redirectUrl = #{ redirecturl}</if>
+      <if test="null != authorities and '' !=  authorities">and authorities = #{ authorities}</if>
+      <if test="null != accessTokenValidity and '' !=  accessTokenValidity">and access_token_validity = #{ accessTokenValidity}</if>
+      <if test="null != refreshTokenValidity and '' !=  refreshTokenValidity">and refresh_token_validity = #{ refreshTokenValidity}</if>
+      <if test="null != additionalinformation and '' !=  additionalinformation">and additionalInformation = #{ additionalinformation}</if>
+      <if test="null != autoapprovescopes and '' !=  autoapprovescopes">and autoApproveScopes = #{ autoapprovescopes}</if>
+	</where>
+  </sql>
+  <sql id="clientdetailsDynamicLikeWhere">
+    <where>
+      <if test="null != appid and '' !=  appid">and appId LIKE #{ appid}</if>
+      <if test="null != resourceids and '' !=  resourceids">and resourceIds LIKE #{ resourceids}</if>
+      <if test="null != appsecret and '' !=  appsecret">and appSecret LIKE #{ appsecret}</if>
+      <if test="null != scope and '' !=  scope">and scope LIKE #{ scope}</if>
+      <if test="null != granttypes and '' !=  granttypes">and grantTypes LIKE #{ granttypes}</if>
+      <if test="null != redirecturl and '' !=  redirecturl">and redirectUrl LIKE #{ redirecturl}</if>
+      <if test="null != authorities and '' !=  authorities">and authorities LIKE #{ authorities}</if>
+      <if test="null != accessTokenValidity and '' !=  accessTokenValidity">and access_token_validity LIKE #{ accessTokenValidity}</if>
+      <if test="null != refreshTokenValidity and '' !=  refreshTokenValidity">and refresh_token_validity LIKE #{ refreshTokenValidity}</if>
+      <if test="null != additionalinformation and '' !=  additionalinformation">and additionalInformation LIKE #{ additionalinformation}</if>
+      <if test="null != autoapprovescopes and '' !=  autoapprovescopes">and autoApproveScopes LIKE #{ autoapprovescopes}</if>
+	</where>
+  </sql>
+  <select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select <include refid="clientdetailsColumns" /> from  `clientdetails` where appId = #{appid}
+  </select>
+  <select id="getOne" parameterType="com.wtf.oauth.po.Clientdetails" resultMap="BaseResultMap">
+    select <include refid="clientdetailsColumns" /> from  `clientdetails` <include refid="clientdetailsDynamicWhere" /> limit 0 , 1
+  </select>
+  <select id="list" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="clientdetailsColumns" /> from  `clientdetails` <include refid="clientdetailsDynamicWhere" />
+	<if test="orderBy != null and orderBy != ''">
+          order by ${orderBy}
+      </if>
+  </select>
+  <select id="listPage" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="clientdetailsColumns" /> from  `clientdetails` <include refid="clientdetailsDynamicWhere" />
+	<if test="orderBy != null">
+            order by ${orderBy}
+        </if>
+        <if test="fromIndex != null and fromIndex > -1 and pageSize != null and pageSize > 0">
+            limit #{fromIndex},#{pageSize}
+        </if>
+  </select>
+  <select id="listLikePage" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="clientdetailsColumns" /> from  `clientdetails` <include refid="clientdetailsDynamicLikeWhere" />
+	<if test="orderBy != null">
+            order by ${orderBy}
+        </if>
+        <if test="fromIndex != null and fromIndex > -1 and pageSize != null and pageSize > 0">
+            limit #{fromIndex},#{pageSize}
+        </if>
+  </select>
+  <select id="countLike" parameterType="com.wtf.oauth.po.Clientdetails" resultType="java.lang.Long">
+    select count(1) from `clientdetails` <include refid="clientdetailsDynamicLikeWhere" />
+  </select>
+  <select id="count" parameterType="com.wtf.oauth.po.Clientdetails" resultType="java.lang.Long">
+    select count(1) from `clientdetails` <include refid="clientdetailsDynamicWhere" />
+  </select>
+  <sql id="save_clientdetails_columns">
+    insert into `clientdetails`(
+		appId ,resourceIds ,appSecret ,scope ,grantTypes ,redirectUrl ,authorities ,access_token_validity ,refresh_token_validity ,additionalInformation ,autoApproveScopes
+	) values
+  </sql>
+  <sql id="save_clientdetails_values">
+    (
+	  #{ appid,jdbcType=VARCHAR},
+	  #{ resourceids,jdbcType=VARCHAR},
+	  #{ appsecret,jdbcType=VARCHAR},
+	  #{ scope,jdbcType=VARCHAR},
+	  #{ granttypes,jdbcType=VARCHAR},
+	  #{ redirecturl,jdbcType=VARCHAR},
+	  #{ authorities,jdbcType=VARCHAR},
+	  #{ accessTokenValidity,jdbcType=INTEGER},
+	  #{ refreshTokenValidity,jdbcType=INTEGER},
+	  #{ additionalinformation,jdbcType=VARCHAR},
+	  #{ autoapprovescopes,jdbcType=VARCHAR}
+	)
+  </sql>
+  <insert id="save" keyProperty="appid" parameterType="com.wtf.oauth.po.Clientdetails" useGeneratedKeys="true">
+    <include refid="save_clientdetails_columns" /><include refid="save_clientdetails_values" />
+  </insert>
+  <insert id="batchSave" parameterType="list">
+    <foreach collection="list" index="index" item="item" open="" separator=";" close="">
+	  <include refid="save_clientdetails_columns" /><include refid="save_clientdetails_values" />
+	</foreach>
+  </insert>
+  <sql id="clientdetailsUpdate">
+    update `clientdetails` 
+	<set> 
+      <if test="null != appid">appId = #{ appid,jdbcType=VARCHAR},</if>
+      <if test="null != resourceids">resourceIds = #{ resourceids,jdbcType=VARCHAR},</if>
+      <if test="null != appsecret">appSecret = #{ appsecret,jdbcType=VARCHAR},</if>
+      <if test="null != scope">scope = #{ scope,jdbcType=VARCHAR},</if>
+      <if test="null != granttypes">grantTypes = #{ granttypes,jdbcType=VARCHAR},</if>
+      <if test="null != redirecturl">redirectUrl = #{ redirecturl,jdbcType=VARCHAR},</if>
+      <if test="null != authorities">authorities = #{ authorities,jdbcType=VARCHAR},</if>
+      <if test="null != accessTokenValidity">access_token_validity = #{ accessTokenValidity,jdbcType=INTEGER},</if>
+      <if test="null != refreshTokenValidity">refresh_token_validity = #{ refreshTokenValidity,jdbcType=INTEGER},</if>
+      <if test="null != additionalinformation">additionalInformation = #{ additionalinformation,jdbcType=VARCHAR},</if>
+      <if test="null != autoapprovescopes">autoApproveScopes = #{ autoapprovescopes,jdbcType=VARCHAR}</if>
+	</set>
+	where appId = #{appid}
+  </sql>
+  <update id="update" parameterType="com.wtf.oauth.po.Clientdetails">
+    <include refid="clientdetailsUpdate" />
+  </update>
+  <update id="batchUpdate" parameterType="list">
+    <foreach collection="list" index="index" item="item" open="" separator=";" close="">
+	  <include refid="clientdetailsUpdate" />
+	</foreach>
+  </update>
+  <delete id="delById">
+    <![CDATA[ delete from `clientdetails` where appId = #{appId} ]]>
+  </delete>
+  <delete id="delArray">
+    delete from `clientdetails` where appId in
+	<foreach collection="array" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
+  </delete>
+  <delete id="delList">
+    delete from `clientdetails` where appId in
+	<foreach collection="list" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
+  </delete>
+</mapper>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtf.oauth.mapper.UmsUserMapper">
+  <resultMap id="BaseResultMap" type="com.wtf.oauth.po.UmsUser">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="enname" jdbcType="VARCHAR" property="enname" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="avatar" jdbcType="VARCHAR" property="avatar" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+  </resultMap>
+  <sql id="ums_userColumns">
+    <![CDATA[ id,username,enname,password,avatar,create_time,last_login_time,status ]]>
+  </sql>
+  <sql id="ums_userDynamicWhere">
+    <where>
+      <if test="null != id and '' !=  id">and id = #{ id}</if>
+      <if test="null != username and '' !=  username">and username = #{ username}</if>
+      <if test="null != enname and '' !=  enname">and enname = #{ enname}</if>
+      <if test="null != password and '' !=  password">and password = #{ password}</if>
+      <if test="null != avatar and '' !=  avatar">and avatar = #{ avatar}</if>
+      <if test="null != createTime and '' !=  createTime">and create_time = #{ createTime}</if>
+      <if test="null != lastLoginTime and '' !=  lastLoginTime">and last_login_time = #{ lastLoginTime}</if>
+      <if test="null != status and '' !=  status">and status = #{ status}</if>
+	</where>
+  </sql>
+  <sql id="ums_userDynamicLikeWhere">
+    <where>
+      <if test="null != id and '' !=  id">and id LIKE #{ id}</if>
+      <if test="null != username and '' !=  username">and username LIKE #{ username}</if>
+      <if test="null != enname and '' !=  enname">and enname LIKE #{ enname}</if>
+      <if test="null != password and '' !=  password">and password LIKE #{ password}</if>
+      <if test="null != avatar and '' !=  avatar">and avatar LIKE #{ avatar}</if>
+      <if test="null != createTime and '' !=  createTime">and create_time LIKE #{ createTime}</if>
+      <if test="null != lastLoginTime and '' !=  lastLoginTime">and last_login_time LIKE #{ lastLoginTime}</if>
+      <if test="null != status and '' !=  status">and status LIKE #{ status}</if>
+	</where>
+  </sql>
+  <select id="getById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select <include refid="ums_userColumns" /> from  `ums_user` where id = #{id}
+  </select>
+  <select id="getOne" parameterType="com.wtf.oauth.po.UmsUser" resultMap="BaseResultMap">
+    select <include refid="ums_userColumns" /> from  `ums_user` <include refid="ums_userDynamicWhere" /> limit 0 , 1
+  </select>
+  <select id="list" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="ums_userColumns" /> from  `ums_user` <include refid="ums_userDynamicWhere" />
+	<if test="orderBy != null and orderBy != ''">
+          order by ${orderBy}
+      </if>
+  </select>
+  <select id="listPage" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="ums_userColumns" /> from  `ums_user` <include refid="ums_userDynamicWhere" />
+	<if test="orderBy != null">
+            order by ${orderBy}
+        </if>
+        <if test="fromIndex != null and fromIndex > -1 and pageSize != null and pageSize > 0">
+            limit #{fromIndex},#{pageSize}
+        </if>
+  </select>
+  <select id="listLikePage" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="ums_userColumns" /> from  `ums_user` <include refid="ums_userDynamicLikeWhere" />
+	<if test="orderBy != null">
+            order by ${orderBy}
+        </if>
+        <if test="fromIndex != null and fromIndex > -1 and pageSize != null and pageSize > 0">
+            limit #{fromIndex},#{pageSize}
+        </if>
+  </select>
+  <select id="countLike" parameterType="com.wtf.oauth.po.UmsUser" resultType="java.lang.Long">
+    select count(1) from `ums_user` <include refid="ums_userDynamicLikeWhere" />
+  </select>
+  <select id="count" parameterType="com.wtf.oauth.po.UmsUser" resultType="java.lang.Long">
+    select count(1) from `ums_user` <include refid="ums_userDynamicWhere" />
+  </select>
+  <sql id="save_ums_user_columns">
+    insert into `ums_user`(
+		username ,enname ,password ,avatar ,create_time ,last_login_time ,status
+	) values
+  </sql>
+  <sql id="save_ums_user_values">
+    (
+	  #{ username,jdbcType=VARCHAR},
+	  #{ enname,jdbcType=VARCHAR},
+	  #{ password,jdbcType=VARCHAR},
+	  #{ avatar,jdbcType=VARCHAR},
+	  #{ createTime,jdbcType=TIMESTAMP},
+	  #{ lastLoginTime,jdbcType=TIMESTAMP},
+	  #{ status,jdbcType=TINYINT}
+	)
+  </sql>
+  <insert id="save" keyProperty="id" parameterType="com.wtf.oauth.po.UmsUser" useGeneratedKeys="true">
+    <include refid="save_ums_user_columns" /><include refid="save_ums_user_values" />
+  </insert>
+  <insert id="batchSave" parameterType="list">
+    <foreach collection="list" index="index" item="item" open="" separator=";" close="">
+	  <include refid="save_ums_user_columns" /><include refid="save_ums_user_values" />
+	</foreach>
+  </insert>
+  <sql id="ums_userUpdate">
+    update `ums_user` 
+	<set> 
+      <if test="null != username">username = #{ username,jdbcType=VARCHAR},</if>
+      <if test="null != enname">enname = #{ enname,jdbcType=VARCHAR},</if>
+      <if test="null != password">password = #{ password,jdbcType=VARCHAR},</if>
+      <if test="null != avatar">avatar = #{ avatar,jdbcType=VARCHAR},</if>
+      <if test="null != createTime">create_time = #{ createTime,jdbcType=TIMESTAMP},</if>
+      <if test="null != lastLoginTime">last_login_time = #{ lastLoginTime,jdbcType=TIMESTAMP},</if>
+      <if test="null != status">status = #{ status,jdbcType=TINYINT}</if>
+	</set>
+	where id = #{id}
+  </sql>
+  <update id="update" parameterType="com.wtf.oauth.po.UmsUser">
+    <include refid="ums_userUpdate" />
+  </update>
+  <update id="batchUpdate" parameterType="list">
+    <foreach collection="list" index="index" item="item" open="" separator=";" close="">
+	  <include refid="ums_userUpdate" />
+	</foreach>
+  </update>
+  <delete id="delById">
+    <![CDATA[ delete from `ums_user` where id = #{id} ]]>
+  </delete>
+  <delete id="delArray">
+    delete from `ums_user` where id in
+	<foreach collection="array" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
+  </delete>
+  <delete id="delList">
+    delete from `ums_user` where id in
+	<foreach collection="list" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
+  </delete>
+</mapper>

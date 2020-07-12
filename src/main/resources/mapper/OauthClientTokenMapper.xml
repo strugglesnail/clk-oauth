@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtf.oauth.mapper.OauthClientTokenMapper">
+  <resultMap id="BaseResultMap" type="com.wtf.oauth.po.OauthClientToken">
+    <id column="authentication_id" jdbcType="VARCHAR" property="authenticationId" />
+    <result column="token_id" jdbcType="VARCHAR" property="tokenId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="client_id" jdbcType="VARCHAR" property="clientId" />
+    <result column="token" jdbcType="LONGVARBINARY" property="token" />
+  </resultMap>
+  <sql id="oauth_client_tokenColumns">
+    <![CDATA[ authentication_id,token_id,user_name,client_id,token ]]>
+  </sql>
+  <sql id="oauth_client_tokenDynamicWhere">
+    <where>
+      <if test="null != authenticationId and '' !=  authenticationId">and authentication_id = #{ authenticationId}</if>
+      <if test="null != tokenId and '' !=  tokenId">and token_id = #{ tokenId}</if>
+      <if test="null != userName and '' !=  userName">and user_name = #{ userName}</if>
+      <if test="null != clientId and '' !=  clientId">and client_id = #{ clientId}</if>
+      <if test="null != token and '' !=  token">and token = #{ token}</if>
+	</where>
+  </sql>
+  <sql id="oauth_client_tokenDynamicLikeWhere">
+    <where>
+      <if test="null != authenticationId and '' !=  authenticationId">and authentication_id LIKE #{ authenticationId}</if>
+      <if test="null != tokenId and '' !=  tokenId">and token_id LIKE #{ tokenId}</if>
+      <if test="null != userName and '' !=  userName">and user_name LIKE #{ userName}</if>
+      <if test="null != clientId and '' !=  clientId">and client_id LIKE #{ clientId}</if>
+      <if test="null != token and '' !=  token">and token LIKE #{ token}</if>
+	</where>
+  </sql>
+  <select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select <include refid="oauth_client_tokenColumns" /> from  `oauth_client_token` where authentication_id = #{authenticationId}
+  </select>
+  <select id="getOne" parameterType="com.wtf.oauth.po.OauthClientToken" resultMap="BaseResultMap">
+    select <include refid="oauth_client_tokenColumns" /> from  `oauth_client_token` <include refid="oauth_client_tokenDynamicWhere" /> limit 0 , 1
+  </select>
+  <select id="list" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="oauth_client_tokenColumns" /> from  `oauth_client_token` <include refid="oauth_client_tokenDynamicWhere" />
+	<if test="orderBy != null and orderBy != ''">
+          order by ${orderBy}
+      </if>
+  </select>
+  <select id="listPage" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="oauth_client_tokenColumns" /> from  `oauth_client_token` <include refid="oauth_client_tokenDynamicWhere" />
+	<if test="orderBy != null">
+            order by ${orderBy}
+        </if>
+        <if test="fromIndex != null and fromIndex > -1 and pageSize != null and pageSize > 0">
+            limit #{fromIndex},#{pageSize}
+        </if>
+  </select>
+  <select id="listLikePage" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="oauth_client_tokenColumns" /> from  `oauth_client_token` <include refid="oauth_client_tokenDynamicLikeWhere" />
+	<if test="orderBy != null">
+            order by ${orderBy}
+        </if>
+        <if test="fromIndex != null and fromIndex > -1 and pageSize != null and pageSize > 0">
+            limit #{fromIndex},#{pageSize}
+        </if>
+  </select>
+  <select id="countLike" parameterType="com.wtf.oauth.po.OauthClientToken" resultType="java.lang.Long">
+    select count(1) from `oauth_client_token` <include refid="oauth_client_tokenDynamicLikeWhere" />
+  </select>
+  <select id="count" parameterType="com.wtf.oauth.po.OauthClientToken" resultType="java.lang.Long">
+    select count(1) from `oauth_client_token` <include refid="oauth_client_tokenDynamicWhere" />
+  </select>
+  <sql id="save_oauth_client_token_columns">
+    insert into `oauth_client_token`(
+		authentication_id ,token_id ,user_name ,client_id ,token
+	) values
+  </sql>
+  <sql id="save_oauth_client_token_values">
+    (
+	  #{ authenticationId,jdbcType=VARCHAR},
+	  #{ tokenId,jdbcType=VARCHAR},
+	  #{ userName,jdbcType=VARCHAR},
+	  #{ clientId,jdbcType=VARCHAR},
+	  #{ token,jdbcType=LONGVARBINARY}
+	)
+  </sql>
+  <insert id="save" keyProperty="authenticationId" parameterType="com.wtf.oauth.po.OauthClientToken" useGeneratedKeys="true">
+    <include refid="save_oauth_client_token_columns" /><include refid="save_oauth_client_token_values" />
+  </insert>
+  <insert id="batchSave" parameterType="list">
+    <foreach collection="list" index="index" item="item" open="" separator=";" close="">
+	  <include refid="save_oauth_client_token_columns" /><include refid="save_oauth_client_token_values" />
+	</foreach>
+  </insert>
+  <sql id="oauth_client_tokenUpdate">
+    update `oauth_client_token` 
+	<set> 
+      <if test="null != authenticationId">authentication_id = #{ authenticationId,jdbcType=VARCHAR},</if>
+      <if test="null != tokenId">token_id = #{ tokenId,jdbcType=VARCHAR},</if>
+      <if test="null != userName">user_name = #{ userName,jdbcType=VARCHAR},</if>
+      <if test="null != clientId">client_id = #{ clientId,jdbcType=VARCHAR},</if>
+      <if test="null != token">token = #{ token,jdbcType=LONGVARBINARY}</if>
+	</set>
+	where authentication_id = #{authenticationId}
+  </sql>
+  <update id="update" parameterType="com.wtf.oauth.po.OauthClientToken">
+    <include refid="oauth_client_tokenUpdate" />
+  </update>
+  <update id="batchUpdate" parameterType="list">
+    <foreach collection="list" index="index" item="item" open="" separator=";" close="">
+	  <include refid="oauth_client_tokenUpdate" />
+	</foreach>
+  </update>
+  <delete id="delById">
+    <![CDATA[ delete from `oauth_client_token` where authentication_id = #{authentication_id} ]]>
+  </delete>
+  <delete id="delArray">
+    delete from `oauth_client_token` where authentication_id in
+	<foreach collection="array" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
+  </delete>
+  <delete id="delList">
+    delete from `oauth_client_token` where authentication_id in
+	<foreach collection="list" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
+  </delete>
+</mapper>

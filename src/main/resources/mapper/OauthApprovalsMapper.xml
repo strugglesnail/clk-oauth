@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtf.oauth.mapper.OauthApprovalsMapper">
+  <resultMap id="BaseResultMap" type="com.wtf.oauth.po.OauthApprovals">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="userId" jdbcType="VARCHAR" property="userid" />
+    <result column="clientId" jdbcType="VARCHAR" property="clientid" />
+    <result column="scope" jdbcType="VARCHAR" property="scope" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="expiresAt" jdbcType="TIMESTAMP" property="expiresat" />
+    <result column="lastModifiedAt" jdbcType="TIMESTAMP" property="lastmodifiedat" />
+  </resultMap>
+  <sql id="oauth_approvalsColumns">
+    <![CDATA[ id,userId,clientId,scope,status,expiresAt,lastModifiedAt ]]>
+  </sql>
+  <sql id="oauth_approvalsDynamicWhere">
+    <where>
+      <if test="null != id and '' !=  id">and id = #{ id}</if>
+      <if test="null != userid and '' !=  userid">and userId = #{ userid}</if>
+      <if test="null != clientid and '' !=  clientid">and clientId = #{ clientid}</if>
+      <if test="null != scope and '' !=  scope">and scope = #{ scope}</if>
+      <if test="null != status and '' !=  status">and status = #{ status}</if>
+      <if test="null != expiresat and '' !=  expiresat">and expiresAt = #{ expiresat}</if>
+      <if test="null != lastmodifiedat and '' !=  lastmodifiedat">and lastModifiedAt = #{ lastmodifiedat}</if>
+	</where>
+  </sql>
+  <sql id="oauth_approvalsDynamicLikeWhere">
+    <where>
+      <if test="null != id and '' !=  id">and id LIKE #{ id}</if>
+      <if test="null != userid and '' !=  userid">and userId LIKE #{ userid}</if>
+      <if test="null != clientid and '' !=  clientid">and clientId LIKE #{ clientid}</if>
+      <if test="null != scope and '' !=  scope">and scope LIKE #{ scope}</if>
+      <if test="null != status and '' !=  status">and status LIKE #{ status}</if>
+      <if test="null != expiresat and '' !=  expiresat">and expiresAt LIKE #{ expiresat}</if>
+      <if test="null != lastmodifiedat and '' !=  lastmodifiedat">and lastModifiedAt LIKE #{ lastmodifiedat}</if>
+	</where>
+  </sql>
+  <select id="getById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select <include refid="oauth_approvalsColumns" /> from  `oauth_approvals` where id = #{id}
+  </select>
+  <select id="getOne" parameterType="com.wtf.oauth.po.OauthApprovals" resultMap="BaseResultMap">
+    select <include refid="oauth_approvalsColumns" /> from  `oauth_approvals` <include refid="oauth_approvalsDynamicWhere" /> limit 0 , 1
+  </select>
+  <select id="list" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="oauth_approvalsColumns" /> from  `oauth_approvals` <include refid="oauth_approvalsDynamicWhere" />
+	<if test="orderBy != null and orderBy != ''">
+          order by ${orderBy}
+      </if>
+  </select>
+  <select id="listPage" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="oauth_approvalsColumns" /> from  `oauth_approvals` <include refid="oauth_approvalsDynamicWhere" />
+	<if test="orderBy != null">
+            order by ${orderBy}
+        </if>
+        <if test="fromIndex != null and fromIndex > -1 and pageSize != null and pageSize > 0">
+            limit #{fromIndex},#{pageSize}
+        </if>
+  </select>
+  <select id="listLikePage" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="oauth_approvalsColumns" /> from  `oauth_approvals` <include refid="oauth_approvalsDynamicLikeWhere" />
+	<if test="orderBy != null">
+            order by ${orderBy}
+        </if>
+        <if test="fromIndex != null and fromIndex > -1 and pageSize != null and pageSize > 0">
+            limit #{fromIndex},#{pageSize}
+        </if>
+  </select>
+  <select id="countLike" parameterType="com.wtf.oauth.po.OauthApprovals" resultType="java.lang.Long">
+    select count(1) from `oauth_approvals` <include refid="oauth_approvalsDynamicLikeWhere" />
+  </select>
+  <select id="count" parameterType="com.wtf.oauth.po.OauthApprovals" resultType="java.lang.Long">
+    select count(1) from `oauth_approvals` <include refid="oauth_approvalsDynamicWhere" />
+  </select>
+  <sql id="save_oauth_approvals_columns">
+    insert into `oauth_approvals`(
+		userId ,clientId ,scope ,status ,expiresAt ,lastModifiedAt
+	) values
+  </sql>
+  <sql id="save_oauth_approvals_values">
+    (
+	  #{ userid,jdbcType=VARCHAR},
+	  #{ clientid,jdbcType=VARCHAR},
+	  #{ scope,jdbcType=VARCHAR},
+	  #{ status,jdbcType=VARCHAR},
+	  #{ expiresat,jdbcType=TIMESTAMP},
+	  #{ lastmodifiedat,jdbcType=TIMESTAMP}
+	)
+  </sql>
+  <insert id="save" keyProperty="id" parameterType="com.wtf.oauth.po.OauthApprovals" useGeneratedKeys="true">
+    <include refid="save_oauth_approvals_columns" /><include refid="save_oauth_approvals_values" />
+  </insert>
+  <insert id="batchSave" parameterType="list">
+    <foreach collection="list" index="index" item="item" open="" separator=";" close="">
+	  <include refid="save_oauth_approvals_columns" /><include refid="save_oauth_approvals_values" />
+	</foreach>
+  </insert>
+  <sql id="oauth_approvalsUpdate">
+    update `oauth_approvals` 
+	<set> 
+      <if test="null != userid">userId = #{ userid,jdbcType=VARCHAR},</if>
+      <if test="null != clientid">clientId = #{ clientid,jdbcType=VARCHAR},</if>
+      <if test="null != scope">scope = #{ scope,jdbcType=VARCHAR},</if>
+      <if test="null != status">status = #{ status,jdbcType=VARCHAR},</if>
+      <if test="null != expiresat">expiresAt = #{ expiresat,jdbcType=TIMESTAMP},</if>
+      <if test="null != lastmodifiedat">lastModifiedAt = #{ lastmodifiedat,jdbcType=TIMESTAMP}</if>
+	</set>
+	where id = #{id}
+  </sql>
+  <update id="update" parameterType="com.wtf.oauth.po.OauthApprovals">
+    <include refid="oauth_approvalsUpdate" />
+  </update>
+  <update id="batchUpdate" parameterType="list">
+    <foreach collection="list" index="index" item="item" open="" separator=";" close="">
+	  <include refid="oauth_approvalsUpdate" />
+	</foreach>
+  </update>
+  <delete id="delById">
+    <![CDATA[ delete from `oauth_approvals` where id = #{id} ]]>
+  </delete>
+  <delete id="delArray">
+    delete from `oauth_approvals` where id in
+	<foreach collection="array" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
+  </delete>
+  <delete id="delList">
+    delete from `oauth_approvals` where id in
+	<foreach collection="list" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
+  </delete>
+</mapper>
